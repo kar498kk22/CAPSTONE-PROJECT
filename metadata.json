@@ -1,0 +1,6 @@
+{
+  "name": "ClaimFlow - Insurance Claim & Instant Payout System",
+  "description": "Automated insurance claim management platform with real-time status tracking, seamless document upload with AI validation, and direct banking API integration for instant payouts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

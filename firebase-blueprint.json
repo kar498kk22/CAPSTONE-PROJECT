@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with authentication and role assignments",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "role": { "type": "string", "enum": ["claimant", "adjuster"] },
+        "createdAt": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "Claim": {
+      "title": "Claim",
+      "description": "Insurance claim document with lifecycle status and settlement parameters",
+      "type": "object",
+      "properties": {
+        "claimNumber": { "type": "string", "maxLength": 50 },
+        "policyNumber": { "type": "string", "maxLength": 50 },
+        "policyType": { "type": "string", "maxLength": 50 },
+        "claimantUid": { "type": "string", "maxLength": 128 },
+        "status": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "SUBMITTED",
+            "DOCS_UNDER_REVIEW",
+            "ADJUSTER_ASSESSMENT",
+            "APPROVED",
+            "PAYOUT_INITIATED",
+            "PAYOUT_SETTLED",
+            "REJECTED"
+          ]
+        },
+        "claimedAmount": { "type": "number" },
+        "approvedAmount": { "type": "number" },
+        "deductible": { "type": "number" },
+        "netPayout": { "type": "number" },
+        "createdAt": { "type": "string", "maxLength": 40 },
+        "updatedAt": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["claimNumber", "policyNumber", "policyType", "claimantUid", "status", "claimedAmount"]
+    },
+    "AuditEvent": {
+      "title": "AuditEvent",
+      "description": "Immutable ledger record for claim status transitions, uploads, and payouts",
+      "type": "object",
+      "properties": {
+        "claimId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 200 },
+        "actor": { "type": "string", "maxLength": 100 },
+        "note": { "type": "string", "maxLength": 1000 },
+        "isAutomated": { "type": "boolean" },
+        "auditHash": { "type": "string", "maxLength": 64 },
+        "timestamp": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["claimId", "type", "title", "actor", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User accounts collection"
+    },
+    "/claims/{claimId}": {
+      "schema": { "$ref": "#/entities/Claim" },
+      "description": "Insurance claims collection"
+    },
+    "/claims/{claimId}/auditEvents/{eventId}": {
+      "schema": { "$ref": "#/entities/AuditEvent" },
+      "description": "Subcollection of immutable audit records for each claim"
+    }
+  }
+}
